@@ -19,7 +19,7 @@ var RegistrationList = function(identifier)
         value:{}
       });
     }
-  }
+  };
 
   this.head = new RNode(null);
   this.tail = new RNode(null);
@@ -39,7 +39,7 @@ var RegistrationList = function(identifier)
     }
 
     return node;
-  }
+  };
 
   var removeNode = function(node)
   {
@@ -54,34 +54,34 @@ var RegistrationList = function(identifier)
     }
   
     return node;
-  }
+  };
 
   self.register = function(content)
   {
     insertNodeAfter(new RNode(content), self.head);
-  }
+  };
   
   self.unregister = function(content)
   {
     removeNode(content.RNodeMap[self.identifier]);
-  }
+  };
   
   self.moveMemberToList = function(content, list)
   {
     list.register(removeNode(content.RNodeMap[self.identifier]));
-  }
+  };
   
   self.performOnMembers = function(func)
   {
     var node = self.head;
     while(node.next != null)
     {
-      if(node.content !== null)
-        func(node.content);
       node = node.next;
+      if(node.prev.content !== null)
+        func(node.prev.content);
     }
-  }
-}
+  };
+};
   
 RegistrationList.prototype.toString = function()
 {
@@ -95,4 +95,4 @@ RegistrationList.prototype.toString = function()
       str += node.content.toString()+",";
   }
   return str;
-}
+};
