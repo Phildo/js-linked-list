@@ -137,7 +137,7 @@ var PrioritizedRegistrationList = function(identifier, priorities)
 PrioritizedRegistrationList.prototype.toString = function()
 {
   var str = "";
-  while(var i = 0; i < this.priorities.length; i++)
+  for(var i = 0; i < this.priorities.length; i++)
     str += this.priorities[i].toString()+",";
   return str;
 };
