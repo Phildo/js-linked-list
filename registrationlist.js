@@ -81,6 +81,11 @@ var RegistrationList = function(identifier)
         func(node.prev.content, args);
     }
   };
+
+  self.firstMember = function()
+  {
+    return head.next.content;
+  }
 };
   
 RegistrationList.prototype.toString = function()
@@ -131,6 +136,11 @@ var PrioritizedRegistrationList = function(identifier, priorities)
   {
     for(var i = 0; i < this.priorities.length; i++)
       this.priorities[i].performOnMembers(func, args);
+  };
+
+  self.firstMember = function(priority)
+  {
+    return this.priorities[i].firstMember();
   };
 };
   
