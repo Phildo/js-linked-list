@@ -71,14 +71,14 @@ var RegistrationList = function(identifier)
     list.register(removeNode(content.RNodeMap[self.identifier]));
   };
   
-  self.performOnMembers = function(func)
+  self.performOnMembers = function(func, args)
   {
     var node = self.head;
     while(node.next != null)
     {
       node = node.next;
       if(node.prev.content !== null)
-        func(node.prev.content);
+        func(node.prev.content, args);
     }
   };
 };
@@ -94,5 +94,50 @@ RegistrationList.prototype.toString = function()
     if(node.content !== null)
       str += node.content.toString()+",";
   }
+  return str;
+};
+
+var PrioritizedRegistrationList = function(identifier, priorities)
+{
+  var self = this;
+  this.identifier = identifier;
+  this.priorities = [];
+  for(var i = 0; i < priorities; i++)
+    this.priorities[i] = new RegistrationList(identifier+"_PRIORITY_"+i);
+
+  self.register = function(content, priority)
+  {
+    this.priorities[priority].register(content);
+  };
+  
+  self.unregister = function(content, priority)
+  {
+    this.priorities[priority].unregister(content);
+  };
+  
+  self.moveMemberToList = function(content, priority, list)
+  {
+    this.priorities[priority].moveMemberToList(content, list);
+  };
+
+  self.moveMemberToPrioritizedList = function(content, priority, list, priority)
+  {
+    this.priorities[priority].unregister(content);
+    list.register(content, priority);
+    //That's the fastest way I can think to do this one, unfortunately... :(
+  };
+  
+  self.performOnMembers = function(func, args)
+  {
+    for(var i = 0; i < this.priorities.length; i++)
+      this.priorities[i].performOnMembers(func, args);
+  };
+};
+  
+PrioritizedRegistrationList.prototype.toString = function()
+{
+  var str = "";
+  while(var i = 0; i < this.priorities.length; i++)
+    str += this.priorities[i].toString()+",";
   return str;
 };
