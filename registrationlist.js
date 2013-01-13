@@ -26,7 +26,8 @@ var RegistrationList = function(identifier)
   this.head.next = this.tail;
   this.tail.prev = this.head;
 
-  var insertNodeAfter = function(node, prevNode)
+  //SHOULDN'T BE CALLED FROM ANYWHERE BUT WITHIN A LIST!! (only public so other lists can call it... )
+  self.insertNodeAfter = function(node, prevNode)
   {
     node.prev = prevNode;
     node.next = prevNode.next;
@@ -41,7 +42,8 @@ var RegistrationList = function(identifier)
     return node;
   };
 
-  var removeNode = function(node)
+  //SHOULDN'T BE CALLED FROM ANYWHERE BUT WITHIN A LIST!! (only public so other lists can call it... )
+  self.removeNode = function(node)
   {
     node.prev.next = node.next;
     node.next.prev = node.prev;
@@ -58,17 +60,17 @@ var RegistrationList = function(identifier)
 
   self.register = function(content)
   {
-    insertNodeAfter(new RNode(content), self.head);
+    self.insertNodeAfter(new RNode(content), self.head);
   };
   
   self.unregister = function(content)
   {
-    removeNode(content.RNodeMap[self.identifier]);
+    self.removeNode(content.RNodeMap[self.identifier]);
   };
   
   self.moveMemberToList = function(content, list)
   {
-    list.register(removeNode(content.RNodeMap[self.identifier]));
+    list.insertNodeAfter(self.removeNode(content.RNodeMap[self.identifier]), list.head);
   };
   
   self.performOnMembers = function(func, args)
@@ -84,7 +86,7 @@ var RegistrationList = function(identifier)
 
   self.firstMember = function()
   {
-    return head.next.content;
+    return self.head.next.content;
   }
 };
   
