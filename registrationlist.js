@@ -73,6 +73,17 @@ var RegistrationList = function(identifier)
     list.insertNodeAfter(self.removeNode(content.RNodeMap[self.identifier]), list.head);
   };
   
+  self.performMemberFunction = function(func, args)
+  {
+    var node = self.head;
+    while(node.next != null)
+    {
+      node = node.next;
+      if(node.prev.content !== null)
+        node.prev.content[func](args);
+    }
+  };
+
   self.performOnMembers = function(func, args)
   {
     var node = self.head;
@@ -87,7 +98,7 @@ var RegistrationList = function(identifier)
   self.firstMember = function()
   {
     return self.head.next.content;
-  }
+  };
 };
   
 RegistrationList.prototype.toString = function()
@@ -132,6 +143,12 @@ var PrioritizedRegistrationList = function(identifier, priorities)
     this.priorities[priority].unregister(content);
     list.register(content, priority);
     //That's the fastest way I can think to do this one, unfortunately... :(
+  };
+  
+  self.performMemberFunction = function(func, args)
+  {
+    for(var i = 0; i < this.priorities.length; i++)
+      this.priorities[i].performMemberFunction(func, args);
   };
   
   self.performOnMembers = function(func, args)
