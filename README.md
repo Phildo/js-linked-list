@@ -67,6 +67,7 @@ Same as normal registration list, but makes sure to execute them in the order sp
 
 
 Super Simple Example code:
+==========================
 
     //Create a list with an identifier
     var list = new RegistrationList("PHYSICS");
@@ -79,6 +80,7 @@ Super Simple Example code:
     list.performOnMembers(function(member, delta){ member.updatePhysics(delta); }, delta);
 
 Slightly Fancier Example Code:
+==============================
 
     //Create lists
     var plist = new RegistrationList("PHYSICS");
