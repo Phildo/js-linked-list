@@ -65,6 +65,35 @@ Unregisters an object (similar to a normal registration list). Must specify the 
 
 Same as normal registration list, but makes sure to execute them in the order specified by their priority.
 
+RecycleRegistrationList
+=======================
+
+Works similarly to a registration list, but instead of adding to/ removing from, it shuffles its members between an active and an inactive list. This reduces the overhead on object creation (expensive!), and instead re-uses old objects. Great for waves of identical enemies that spawn and die, or simple particle systems.
+
+    var rlist = new RecycleRegistrationList("ID", generateFunc, refreshFunc);
+
+Creates a recycle registrationList with whatever ID you assign (Just like a normal registration list, you are responsible for uniqueness of IDs). generateFunc will be called to generate a new member of the list when there are none left in the inactive list (eg the first times you add something to the list). refreshFunc will be called on every newly generated member, as well as on every member as it is transferred from inactive back to active (aka as it is being recycled).
+
+    var member = rlist.get();
+
+Either generates a new member as per your function, or gives you a refreshed old member. You are responsible for ensuring these result in an object in the same state (via your generateFunc and refreshFunc).
+
+    rlist.add(member);
+
+Adds the member to the list of active members. 
+
+    rlist.add(rlist.get());
+
+If no additional processing is needed on a member, you can combine these two functions (as seen above).
+
+    rlist.retire(member);
+
+Moves a member from the active list to the inactive list.
+
+    rlist.performMemberFunction(func, arg);
+    rlist.performOnMembers(func, arg);
+
+Same as normal registration list - but only performs them on active members.
 
 Super Simple Example code:
 ==========================
@@ -114,7 +143,6 @@ Slightly Fancier Example Code:
     plist.performOnMembers("updatePhysics", delta);
     slomoplist.performOnMembers("updateSloMoPhysics", delta);
     rlist.performOnMembers("render", null);
-    
     
 You get the idea.
 

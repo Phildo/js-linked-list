@@ -170,3 +170,50 @@ PrioritizedRegistrationList.prototype.toString = function()
     str += this.priorities[i].toString()+",";
   return str;
 };
+
+var RecycleRegistrationList = function(identifier, generateFunc, refreshFunc)
+{
+  var self = this;
+  this.identifier = identifier;
+  var active = new RegistrationList("RECYCLE_"+identifier+"_ACTIVE");
+  var inactive = new RegistrationList("RECYCLE_"+identifier+"_INACTIVE");
+
+  self.generate = generateFunc;
+  self.refresh = refreshFunc;
+
+  self.get = function()
+  {
+    var m;
+    if(m = inactive.firstMember())
+      inactive.unregister(m);
+    else
+      m = self.generate();
+    self.refresh(m);
+    return m;
+  };
+
+  self.add = function(m)
+  {
+    active.register(m);
+  }
+  
+  self.retire = function(m)
+  {
+    active.moveMemberToList(m, inactive);
+  }
+  
+  self.performMemberFunction = function(func, args)
+  {
+    active.performMemberFunction(func, args);
+  };
+
+  self.performOnMembers = function(func, args)
+  {
+    active.performOnMembers(func, args);
+  };
+
+  self.firstMember = function()
+  {
+    return active.firstMember();
+  };
+};
