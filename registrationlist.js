@@ -99,6 +99,13 @@ var RegistrationList = function(identifier)
   {
     return self.head.next.content;
   };
+
+  self.empty = function()
+  {
+    var m;
+    while(m = self.firstMember())
+      self.unregister(m);
+  };
 };
   
 RegistrationList.prototype.toString = function()
@@ -161,6 +168,12 @@ var PrioritizedRegistrationList = function(identifier, priorities)
   {
     return this.priorities[i].firstMember();
   };
+
+  self.empty = function()
+  {
+    for(var i = 0; i < this.priorities.length; i++)
+      this.priorities[i].empty();
+  };
 };
   
 PrioritizedRegistrationList.prototype.toString = function()
@@ -215,5 +228,12 @@ var RecycleRegistrationList = function(identifier, generateFunc, refreshFunc)
   self.firstMember = function()
   {
     return active.firstMember();
+  };
+
+  self.empty = function()
+  {
+    var m;
+    while(m = self.firstMember())
+      self.retire(m);
   };
 };
