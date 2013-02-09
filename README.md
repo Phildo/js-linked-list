@@ -1,4 +1,4 @@
-js-registration-list
+js-linked-list
 ====================
 
 Linked list implementation in javascript, with a few helper functions to easily execute functions on all members, shuffle members between lists, etc...
@@ -12,24 +12,24 @@ DO NOT use for:
 
 All operations o(1) (well, except for 'performOnMembers', which is o(n)... but c'mon...)
 
-RegistrationList
+LinkedList
 ================
 
-    var list = new RegistrationList("ID");
+    var list = new LinkedList("ID");
 
-Creates a registration list with whatever ID you assign. You are responsible for making sure the IDs are unique (failure to do so might mess up objects that are a part of multiple lists).
+Creates a linked list with whatever ID you assign. You are responsible for making sure the IDs are unique (failure to do so might mess up objects that are a part of multiple lists).
 
-    list.register(object);
+    list.add(object);
 
-Registers an object to a list. The only change to the object is the appendation of a variable 'RNodeMap'. This is a map of listname->node pairs. You shouldn't mess with it (and if you are already using that variable name... sorry?).
+Adds an object to a list. The only change to the object is the appendation of a variable 'LLNodeMap'. This is a map of listname->node pairs. You shouldn't mess with it (and if you are already using that variable name... sorry?).
 
-    list.unregister(object);
+    list.remove(object);
 
-Removes the object from the given list. The object will retain its RNodeMap variable, in the case that it is a member of multiple lists.
+Removes the object from the given list. The object will retain its LLNodeMap variable, in the case that it is a member of multiple lists.
 
     list.moveMemberToList(object, newList);
 
-Moves object from one list to another. Slightly faster (and more convenient) than 'list.unregister(object); newList.register(object);'
+Moves object from one list to another. Slightly faster (and more convenient) than 'list.remove(object); newList.add(object);'
 
     list.performMemberFunction(func, arg);
 
@@ -43,36 +43,36 @@ Performs a function 'func' (passed in as an actual function) once for each membe
 
 Returns the first member of the list. Null if there are none. Good for checking if the list is non-empty, or 'popping' an arbitrary member from the list.
 
-PrioritizedRegistrationList
+PrioritizedLinkedList
 ===========================
 
-Almost exactly the same as RegistrationList, but with some control over order of execution.
+Almost exactly the same as LinkedList, but with some control over order of execution.
 
-    var plist = new PrioritizedRegistrationList("ID", numPriorities);
+    var plist = new PrioritizedLinkedList("ID", numPriorities);
 
-Creates a prioritized registration list with whatever ID you assign (Just like a normal registration list, you are responsible for uniqueness of IDs). numPriorities is an integer describing the fidelity of priorities you need (ie will you need 100 ordered sets of events? or just 2 sets to ensure that 'a' stuff happens before 'b' stuff, but ordering beyond that is unnecessary).
+Creates a prioritized linked list with whatever ID you assign (Just like a normal linked list, you are responsible for uniqueness of IDs). numPriorities is an integer describing the fidelity of priorities you need (ie will you need 100 ordered sets of events? or just 2 sets to ensure that 'a' stuff happens before 'b' stuff, but ordering beyond that is unnecessary).
 
-    plist.register(object, priority);
+    plist.add(object, priority);
 
-Registers an object to the given list (similar to a normal registration list). Priority specifies ordering (0 being first, numPriorities-1 being last).
+Adds an object to the given list (similar to a normal linked list). Priority specifies ordering (0 being first, numPriorities-1 being last).
 
-    plist.unregister(object, priority);
+    plist.remove(object, priority);
 
-Unregisters an object (similar to a normal registration list). Must specify the priority from which it was registered (I realize this is a bit clumsy, and might refactor that for the future).
+Removes an object (similar to a normal linked list). Must specify the priority from which it was added (I realize this is a bit clumsy, and might refactor that for the future).
 
     plist.performMemberFunction(func, arg);
     plist.performOnMembers(func, arg);
 
-Same as normal registration list, but makes sure to execute them in the order specified by their priority.
+Same as normal linked list, but makes sure to execute them in the order specified by their priority.
 
-RecycleRegistrationList
+RecycleLinkedList
 =======================
 
-Works similarly to a registration list, but instead of adding to/ removing from, it shuffles its members between an active and an inactive list. This reduces the overhead on object creation (expensive!), and instead re-uses old objects. Great for waves of identical enemies that spawn and die, or simple particle systems.
+Works similarly to a linked list, but instead of adding to/ removing from, it shuffles its members between an active and an inactive list. This reduces the overhead on object creation (expensive!), and instead re-uses old objects. Great for waves of identical enemies that spawn and die, or simple particle systems.
 
-    var rlist = new RecycleRegistrationList("ID", generateFunc, refreshFunc);
+    var rlist = new RecycleLinkedList("ID", generateFunc, refreshFunc);
 
-Creates a recycle registrationList with whatever ID you assign (Just like a normal registration list, you are responsible for uniqueness of IDs). generateFunc will be called to generate a new member of the list when there are none left in the inactive list (eg the first times you add something to the list). refreshFunc will be called on every newly generated member, as well as on every member as it is transferred from inactive back to active (aka as it is being recycled).
+Creates a recycle linkedList with whatever ID you assign (Just like a normal linked list, you are responsible for uniqueness of IDs). generateFunc will be called to generate a new member of the list when there are none left in the inactive list (eg the first times you add something to the list). refreshFunc will be called on every newly generated member, as well as on every member as it is transferred from inactive back to active (aka as it is being recycled).
 
     var member = rlist.get();
 
@@ -93,16 +93,16 @@ Moves a member from the active list to the inactive list.
     rlist.performMemberFunction(func, arg);
     rlist.performOnMembers(func, arg);
 
-Same as normal registration list - but only performs them on active members.
+Same as normal linked list - but only performs them on active members.
 
 Super Simple Example code:
 ==========================
 
     //Create a list with an identifier
-    var list = new RegistrationList("PHYSICS");
+    var list = new LinkedList("PHYSICS");
 
     for(var i = 0; i < 10; i++)
-      list.register(new PhysicsObject());
+      list.add(new PhysicsObject());
 
     //These next two lines do the same thing
     list.performMemberFunction("updatePhysics", delta);
@@ -112,8 +112,8 @@ Slightly Fancier Example Code:
 ==============================
 
     //Create lists
-    var plist = new RegistrationList("PHYSICS");
-    var rlist = new RegistrationList("RENDER");
+    var plist = new LinkedList("PHYSICS");
+    var rlist = new LinkedList("RENDER");
     var entities = [];
     
     var entity;
@@ -121,21 +121,21 @@ Slightly Fancier Example Code:
     {
       entity = new Entity();
       entities[i] = entity;
-      plist.register(entity);
-      rlist.register(entity);
+      plist.add(entity);
+      rlist.add(entity);
     }
     
     plist.performOnMembers("updatePhysics", delta);
     rlist.performOnMembers("render", null);
     
     //Let's say we no longer want entity 4 to update its physics
-    plist.unregister(entities[3]);
+    plist.remove(entities[3]);
     
     plist.performOnMembers("updatePhysics", delta);
     rlist.performOnMembers("render", null);
     
     //Now let's say we want entities 6-10 to go into slo-motion mode
-    slomoplist = new RegistrationList("SLOMOPHYSICS");
+    slomoplist = new LinkedList("SLOMOPHYSICS");
     
     for(var i = 5; i < 10; i++)
       plist.moveMemberToList(entities[i], slomoplist);
