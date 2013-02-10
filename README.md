@@ -131,8 +131,8 @@ Slightly Fancier Example Code:
     //Let's say we no longer want entity 4 to update its physics
     plist.remove(entities[3]);
     
-    plist.performOnMembers("updatePhysics", delta);
-    rlist.performOnMembers("render", null);
+    plist.performMemberFunction("updatePhysics", delta);
+    rlist.performMemberFunction("render", null);
     
     //Now let's say we want entities 6-10 to go into slo-motion mode
     slomoplist = new LinkedList("SLOMOPHYSICS");
@@ -140,9 +140,9 @@ Slightly Fancier Example Code:
     for(var i = 5; i < 10; i++)
       plist.moveMemberToList(entities[i], slomoplist);
       
-    plist.performOnMembers("updatePhysics", delta);
-    slomoplist.performOnMembers("updateSloMoPhysics", delta);
-    rlist.performOnMembers("render", null);
+    plist.performMemberFunction("updatePhysics", delta);
+    slomoplist.performMemberFunction("updateSloMoPhysics", delta);
+    rlist.performMemberFunction("render", null);
     
 You get the idea.
 
