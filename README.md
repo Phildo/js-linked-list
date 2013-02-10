@@ -125,8 +125,8 @@ Slightly Fancier Example Code:
       rlist.add(entity);
     }
     
-    plist.performOnMembers("updatePhysics", delta);
-    rlist.performOnMembers("render", null);
+    plist.performMemberFunction("updatePhysics", delta); //thanks /u/vlaube!
+    rlist.performMemberFunction("render", null);
     
     //Let's say we no longer want entity 4 to update its physics
     plist.remove(entities[3]);
