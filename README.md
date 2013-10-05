@@ -12,7 +12,7 @@ DO NOT use for:
 
 All operations o(1) (well, except for 'performOnMembers', which is o(n)... but c'mon...)
 
-BENCHMARKS
+Benchmarks
 ================
 
 See benchmark.html to do your own tests! Know when to use linked list and when not to! 
