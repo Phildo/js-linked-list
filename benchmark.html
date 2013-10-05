@@ -12,6 +12,11 @@
   var llRemoveOrder;
   var timestamp;
 
+  var numArrPopulates     = 0; var avgArrPopulate     = 0;
+  var numLLPopulates      = 0; var avgLLPopulate      = 0;
+  var numArrRandomRemoves = 0; var avgArrRandomRemove = 0;
+  var numLLRandomRemoves  = 0; var avgLLRandomRemove  = 0;
+
   function load()
   {
     setup();
@@ -61,7 +66,11 @@
     timestamp = Date.now();
     for(var i = 0; i < n; i++)
       arr.push(arrObjPool[i]);
-    document.getElementById("arr_populate_result").innerHTML = Date.now()-timestamp;
+    timestamp = Date.now()-timestamp;
+    avgArrPopulate = ((numArrPopulates*avgArrPopulate)+timestamp)/(numArrPopulates+1);
+    numArrPopulates++;
+    document.getElementById("arr_populate_duration").innerHTML = timestamp;
+    document.getElementById("arr_populate_avg").innerHTML = avgArrPopulate;
   }
 
   function llPopulate()
@@ -70,44 +79,76 @@
     timestamp = Date.now();
     for(var i = 0; i < n; i++)
       ll.add(llObjPool[i]);
-    document.getElementById("ll_populate_result").innerHTML = Date.now()-timestamp;
+    timestamp = Date.now()-timestamp;
+    avgLLPopulate = ((numLLPopulates*avgLLPopulate)+timestamp)/(numLLPopulates+1);
+    numLLPopulates++;
+    document.getElementById("ll_populate_duration").innerHTML = timestamp;
+    document.getElementById("ll_populate_avg").innerHTML = avgLLPopulate;
   }
 
   function arrRandomRemove()
   {
+    if(arr.length == 0) arrPopulate();
+
     timestamp = Date.now();
     for(var i = 0; i < n; i++)
       arr.splice(arrRemoveOrder[i],1);
-    document.getElementById("arr_randomremove_result").innerHTML = Date.now()-timestamp;
+    timestamp = Date.now()-timestamp;
+    avgArrRandomRemove = ((numArrRandomRemoves*avgArrRandomRemove)+timestamp)/(numArrRandomRemoves+1);
+    numArrRandomRemoves++;
+    document.getElementById("arr_randomremove_duration").innerHTML = timestamp;
+    document.getElementById("arr_randomremove_avg").innerHTML = avgArrRandomRemove;
   }
 
   function llRandomRemove()
   {
+    if(ll.firstMember() == null) llPopulate();
+
     timestamp = Date.now();
     for(var i = 0; i < n; i++)
       ll.remove(llObjPool[llRemoveOrder[i]]);
-    document.getElementById("ll_randomremove_result").innerHTML = Date.now()-timestamp;
+    timestamp = Date.now()-timestamp;
+    avgLLRandomRemove = ((numLLRandomRemoves*avgLLRandomRemove)+timestamp)/(numLLRandomRemoves+1);
+    numLLRandomRemoves++;
+    document.getElementById("ll_randomremove_duration").innerHTML = timestamp;
+    document.getElementById("ll_randomremove_avg").innerHTML = avgLLRandomRemove;
   }
 
 </script>
 <body onload="load();">
 <button type="button" onclick="resetAll();">Reset</button>
 <button type="button" onclick="runFullSuite();">Run All</button><br /><br />
-<div id="arr">
-  <span class="test">
-    <button type="button" onclick="arrPopulate();">Populate</button>: <span id="arr_populate_result">0</span>ms
-  </span>
-  <span class="test">
-    <button type="button" onclick="arrRandomRemove();">Random Remove</button>: <span id="arr_randomremove_result">0</span>ms
-  </span>
-</div>
-<div id="ll">
-  <span class="test">
-    <button type="button" onclick="llPopulate();">Populate</button>: <span id="ll_populate_result">0</span>ms
-  </span>
-  <span class="test">
-    <button type="button" onclick="llRandomRemove();">Random Remove</button>: <span id="ll_randomremove_result">0</span>ms
-  </span>
+<table cellpadding="10" border="1">
+  <tr> <td></td> <td colspan="3">Populate</td><td colspan="3">Random Remove</td> </tr>
+  <tr> 
+    <td></td>
+    <td></td><td>Duration</td><td>Avg. Duration</td> 
+    <td></td><td>Duration</td><td>Avg. Duration</td> 
+  </tr>
+
+  <tr>
+    <td>Array</td>
+    <td><button type="button" onclick="arrPopulate();">GO</button></td>
+    <td><span id="arr_populate_duration">0</span>ms</td>
+    <td><span id="arr_populate_avg">0</span>ms</td>
+
+    <td><button type="button" onclick="arrRandomRemove();">GO</button></td>
+    <td><span id="arr_randomremove_duration">0</span>ms</td>
+    <td><span id="arr_randomremove_avg">0</span>ms</td>
+  </tr>
+
+  <tr>
+    <td>LinkedList</td>
+    <td><button type="button" onclick="llPopulate();">GO</button></td>
+    <td><span id="ll_populate_duration">0</span>ms</td>
+    <td><span id="ll_populate_avg">0</span>ms</td>
+
+    <td><button type="button" onclick="llRandomRemove();">GO</button></td>
+    <td><span id="ll_randomremove_duration">0</span>ms</td>
+    <td><span id="ll_randomremove_avg">0</span>ms</td>
+  </tr>
+</table>
+
 </div>
 
 </body>
