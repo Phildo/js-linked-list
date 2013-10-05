@@ -1,38 +1,57 @@
 <html>
 <script type='text/javascript' src='linkedlist.js'></script>
 <script type='text/javascript'>
-  var n = 100000;
+  var n = 100000; //The number of elements to be populated/removed
 
-  var arr;
-  var ll;
+  var arr = []; //the array
+  var ll = new LinkedList("BENCHMARK_LL");  //the linked list
 
+  //All the objects that get inserted and removed are created before any tests are run
   var arrObjPool;
-  var arrRemoveOrder;
   var llObjPool;
+
+  //Lists of random indexes to remove from each implementation.
+  //This way, the random generation doesn't get in the way of timing of removal.
+  var arrRemoveOrder;
   var llRemoveOrder;
+
+  //Just a global timestamp variable to manage the times
   var timestamp;
 
-  var numArrPopulates     = 0; var avgArrPopulate     = 0;
-  var numLLPopulates      = 0; var avgLLPopulate      = 0;
-  var numArrRandomRemoves = 0; var avgArrRandomRemove = 0;
-  var numLLRandomRemoves  = 0; var avgLLRandomRemove  = 0;
+  //Used to keep track of average times without dealing with managing lists of previous times
+  var numArrPopulates;     var avgArrPopulate;
+  var numLLPopulates;      var avgLLPopulate;
+  var numArrRandomRemoves; var avgArrRandomRemove;
+  var numLLRandomRemoves ; var avgLLRandomRemove;
 
-  function load()
-  {
-    setup();
-    resetAll();
-  }
-
+  //Run once to generate all components needed for testing
   function setup()
   {
-    arrObjPool = [];
+    numArrPopulates     = 0; avgArrPopulate     = 0;
+    numLLPopulates      = 0; avgLLPopulate      = 0;
+    numArrRandomRemoves = 0; avgArrRandomRemove = 0;
+    numLLRandomRemoves  = 0; avgLLRandomRemove  = 0;
+
+    document.getElementById("arr_populate_duration").innerHTML = 0;
+    document.getElementById("arr_populate_avg").innerHTML = 0;
+    document.getElementById("ll_populate_duration").innerHTML = 0;
+    document.getElementById("ll_populate_avg").innerHTML = 0;
+    document.getElementById("arr_randomremove_duration").innerHTML = 0;
+    document.getElementById("arr_randomremove_avg").innerHTML = 0;
+    document.getElementById("ll_randomremove_duration").innerHTML = 0;
+    document.getElementById("ll_randomremove_avg").innerHTML = 0;
+
+    arrObjPool     = [];
+    llObjPool      = [];
     arrRemoveOrder = [];
-    llObjPool = [];
-    llRemoveOrder = [];
+    llRemoveOrder  = [];
     for(var i = 0; i < n; i++)
     {
+      //Notice- same exact objects for each implementation
       arrObjPool.push({"id":i});
       llObjPool.push({"id":i});
+
+      //Just using this loop to populate the remove order array for ll (see next loop for details)
       llRemoveOrder.push(i);
     }
 
@@ -40,26 +59,31 @@
     var temp;
     for(var i = 0; i < n; i++)
     {
+      //Uses in-place-shuffle to randomly distribute numbers 0-n for random remove order for ll.
       randI = Math.floor(Math.random()*(n-i));
       temp = llRemoveOrder[i];
       llRemoveOrder[i] = llRemoveOrder[randI+i];
       llRemoveOrder[randI+i] = temp;
 
+      //Let r(s,b) generate a random number between s-b; The array remove order must be [r(0,n), r(0,n-1), r(n-2), ...];
+      //This is because you can't remove an object in an array by the place it WAS before any deletions occurred (the length is obviously shrinking).
+      //So, since that formula needed to be generated for the in place shuffle anyways, I just re-use that variable (randI).
+      //tl;dr: this is a list of indexes that you can remove from an array of length n, in the order they appear.
       arrRemoveOrder.push(randI);
     }
   }
 
-  function resetAll() { resetArr(); resetLL(); }
-  function resetArr() { arr = []; }
-  function resetLL() { ll = new LinkedList("BENCHMARK_LL"); }
-
-  function runFullSuite()
+  function setN(newN)
   {
-    resetAll();
-    arrPopulate();
-    llPopulate();
-  } 
+    n = newN;
+    document.getElementById("n").innerHTML = n;
+    setup();
+  }
 
+  function resetArr() { arr = []; }
+  function resetLL()  { ll = new LinkedList("BENCHMARK_LL"); }
+
+  //Run Array population test
   function arrPopulate()
   {
     resetArr();
@@ -73,6 +97,7 @@
     document.getElementById("arr_populate_avg").innerHTML = avgArrPopulate;
   }
 
+  //Run LinkedList population test
   function llPopulate()
   {
     resetLL();
@@ -86,6 +111,7 @@
     document.getElementById("ll_populate_avg").innerHTML = avgLLPopulate;
   }
 
+  //Run Array random remove test
   function arrRandomRemove()
   {
     if(arr.length == 0) arrPopulate();
@@ -100,6 +126,7 @@
     document.getElementById("arr_randomremove_avg").innerHTML = avgArrRandomRemove;
   }
 
+  //Run LinkedList random remove test
   function llRandomRemove()
   {
     if(ll.firstMember() == null) llPopulate();
@@ -115,10 +142,33 @@
   }
 
 </script>
-<body onload="load();">
-<button type="button" onclick="resetAll();">Reset</button>
-<button type="button" onclick="runFullSuite();">Run All</button><br /><br />
+<body onload="setN(100000);">
+Choose N: (current N=<span id="n">0</span>)<br/><br/>
+<button type="button" onclick="setN(100);">100</button>(might see straight 0's... javascript too fast to make meaning at this scale)<br />
+<button type="button" onclick="setN(1000);">1,000</button><br />
+<button type="button" onclick="setN(10000);">10,000</button><br />
+<button type="button" onclick="setN(100000);">100,000</button>(recommended test)<br />
+<button type="button" onclick="setN(150000);">150,000</button><br />
+<button type="button" onclick="setN(175000);">175,000</button><br />
+<button type="button" onclick="setN(190000);">190,000</button><br />
+<button type="button" onclick="setN(200000);">200,000</button><br />
+<button type="button" onclick="setN(500000);">500,000</button><br />
+<button type="button" onclick="setN(750000);">750,000</button><br />
+<button type="button" onclick="setN(1000000);">1,000,000</button><br />
+<button type="button" onclick="setN(2000000);">2,000,000</button><br />
+<button type="button" onclick="setN(5000000);">5,000,000</button>(not reccommended...)<br />
+<br />
+<br />
 <table cellpadding="10" border="1">
+  <col width="200">
+  <col width="200">
+  <col width="200">
+  <col width="200">
+  <col width="200">
+  <col width="200">
+  <col width="200">
+  <col width="200">
+  <col width="200">
   <tr> <td></td> <td colspan="3">Populate</td><td colspan="3">Random Remove</td> </tr>
   <tr> 
     <td></td>
@@ -149,6 +199,26 @@
   </tr>
 </table>
 
+<br />
+<br />
+<br />
+Some Notes:<br />
+<ul>
+  <li>
+    <b>Random Removal of > 200,000 from array can take a REALLY long time.</b>
+  </li>
+  <li>
+    Linked List's first run of "populate" will be significantly slower than subsequent populates. This is due to the large overhead of creating the node objects on all members. So, something to keep in mind when using this in application code: the initial insert of an element into a LL will take a bit.
+  </li>
+  <li>
+    Array's run of "random remove" is highly inconsistent (sometimes taking up to 2s @n=100,000 on my machine). I'm not entirely sure what the cause is, but just something I'd like people to note. :P
+  </li>
+  <li>
+    If you don't run "populate" before every "random remove", you will notice that populate will automatically get run (obviously, the list needs to be populated before stuff can be removed from it). This will update the statistics of "populate" (why run it and not get its data?), but the time required to populate will NOT feed into the time recorded to remove (just an FYI in case it takes a second to populate, but reports that the remove only took a few ms).
+  </li>
+  <li>
+    Please view the source for questions about implementation. I've tried to comment it to make it obvious what steps were taken to ensure "fair" population/removal algorithms were used.
+  </li>
 </div>
 
 </body>
