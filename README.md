@@ -18,22 +18,34 @@ See benchmark.html to do your own tests! Know when to use linked list and when n
 Quick results on my machine (2.3Ghz i7):
 
 For n = 10,000:
+
 Array:
+
   Populate- 0.2ms
+
   Random Removal- 3.6ms
 
+
 LinkedList:
+
   Populate- 7.3ms
+
   Random Removal- 3.8ms
 
 
 For n = 100,000:
+
 Array:
+
   Populate- 1.9ms
+
   Random Removal- 219.5ms
 
+
 LinkedList:
+
   Populate- 76.3ms
+
   Random Removal- 66.69ms
 
 
