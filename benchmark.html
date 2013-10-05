@@ -1,0 +1,115 @@
+<html>
+<script type='text/javascript' src='linkedlist.js'></script>
+<script type='text/javascript'>
+  var n = 100000;
+
+  var arr;
+  var ll;
+
+  var arrObjPool;
+  var arrRemoveOrder;
+  var llObjPool;
+  var llRemoveOrder;
+  var timestamp;
+
+  function load()
+  {
+    setup();
+    resetAll();
+  }
+
+  function setup()
+  {
+    arrObjPool = [];
+    arrRemoveOrder = [];
+    llObjPool = [];
+    llRemoveOrder = [];
+    for(var i = 0; i < n; i++)
+    {
+      arrObjPool.push({"id":i});
+      llObjPool.push({"id":i});
+      llRemoveOrder.push(i);
+    }
+
+    var randI;
+    var temp;
+    for(var i = 0; i < n; i++)
+    {
+      randI = Math.floor(Math.random()*(n-i));
+      temp = llRemoveOrder[i];
+      llRemoveOrder[i] = llRemoveOrder[randI+i];
+      llRemoveOrder[randI+i] = temp;
+
+      arrRemoveOrder.push(randI);
+    }
+  }
+
+  function resetAll() { resetArr(); resetLL(); }
+  function resetArr() { arr = []; }
+  function resetLL() { ll = new LinkedList("BENCHMARK_LL"); }
+
+  function runFullSuite()
+  {
+    resetAll();
+    arrPopulate();
+    llPopulate();
+  } 
+
+  function arrPopulate()
+  {
+    resetArr();
+    timestamp = Date.now();
+    for(var i = 0; i < n; i++)
+      arr.push(arrObjPool[i]);
+    document.getElementById("arr_populate_result").innerHTML = Date.now()-timestamp;
+  }
+
+  function llPopulate()
+  {
+    resetLL();
+    timestamp = Date.now();
+    for(var i = 0; i < n; i++)
+      ll.add(llObjPool[i]);
+    document.getElementById("ll_populate_result").innerHTML = Date.now()-timestamp;
+  }
+
+  function arrRandomRemove()
+  {
+    timestamp = Date.now();
+    for(var i = 0; i < n; i++)
+      arr.splice(arrRemoveOrder[i],1);
+    document.getElementById("arr_randomremove_result").innerHTML = Date.now()-timestamp;
+  }
+
+  function llRandomRemove()
+  {
+    timestamp = Date.now();
+    for(var i = 0; i < n; i++)
+      ll.remove(llObjPool[llRemoveOrder[i]]);
+    document.getElementById("ll_randomremove_result").innerHTML = Date.now()-timestamp;
+  }
+
+</script>
+<body onload="load();">
+<button type="button" onclick="resetAll();">Reset</button>
+<button type="button" onclick="runFullSuite();">Run All</button><br /><br />
+<div id="arr">
+  <span class="test">
+    <button type="button" onclick="arrPopulate();">Populate</button>: <span id="arr_populate_result">0</span>ms
+  </span>
+  <span class="test">
+    <button type="button" onclick="arrRandomRemove();">Random Remove</button>: <span id="arr_randomremove_result">0</span>ms
+  </span>
+</div>
+<div id="ll">
+  <span class="test">
+    <button type="button" onclick="llPopulate();">Populate</button>: <span id="ll_populate_result">0</span>ms
+  </span>
+  <span class="test">
+    <button type="button" onclick="llRandomRemove();">Random Remove</button>: <span id="ll_randomremove_result">0</span>ms
+  </span>
+</div>
+
+</body>
+</html>
+
